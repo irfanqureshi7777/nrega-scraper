@@ -1,0 +1,25 @@
+name: NREGA Scraper Daily
+
+on:
+  schedule:
+    - cron: "30 1 * * *"  # Runs daily at 7:00 AM IST (1:30 AM UTC)
+  workflow_dispatch:      # Also allows manual trigger from GitHub UI
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run NREGA scraper
+        run: node newdata.js
