@@ -1,0 +1,25 @@
+{
+  "name": "nrega-scraper",
+  "version": "1.0.0",
+  "main": "newdata.js",
+  "scripts": {
+    "start": "node newdata.js"
+  },
+  "dependencies": {
+    "googleapis": "^133.0.0",
+    "node-cron": "^4.0.4",
+    "puppeteer": "^24.8.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/irfanqureshi7777/nrega-scraper.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/irfanqureshi7777/nrega-scraper/issues"
+  },
+  "homepage": "https://github.com/irfanqureshi7777/nrega-scraper#readme",
+  "description": ""
+}
