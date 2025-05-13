@@ -53,7 +53,11 @@ async function writeToSheet(data) {
     requestBody: { values: data }
   });
 
+<<<<<<< HEAD
   console.log('✅ Data successfully written to R6.9!');
+=======
+  console.log('✅ Data successfully written to Sheet1!');
+>>>>>>> 43b1cdd (Initial commit for Render deployment)
 }
 
 // ✅ Run this every minute

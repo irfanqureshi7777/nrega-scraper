@@ -1,6 +1,7 @@
 {
   "name": "nrega-scraper",
   "version": "1.0.0",
+<<<<<<< HEAD
   "main": "importtable.js",
   "scripts": {
     "start": "node importtable.js",
@@ -15,6 +16,13 @@
     "dotenv": "^16.5.0",
     "google-auth-library": "^9.15.1",
     "google-spreadsheet": "^4.1.4",
+=======
+  "main": "newdata.js",
+  "scripts": {
+    "start": "node newdata.js"
+  },
+  "dependencies": {
+>>>>>>> 43b1cdd (Initial commit for Render deployment)
     "googleapis": "^133.0.0",
     "node-cron": "^4.0.4",
     "puppeteer": "^24.8.2"
@@ -30,8 +38,12 @@
     "url": "https://github.com/irfanqureshi7777/nrega-scraper/issues"
   },
   "homepage": "https://github.com/irfanqureshi7777/nrega-scraper#readme",
+<<<<<<< HEAD
   "description": "",
   "devDependencies": {
     "concurrently": "^9.1.2"
   }
+=======
+  "description": ""
+>>>>>>> 43b1cdd (Initial commit for Render deployment)
 }

@@ -3,19 +3,20 @@ const { google } = require('googleapis');
 const path = require('path');
 const cron = require('node-cron'); // ✅ add cron
 
-const SHEET_ID = '1vi-z__fFdVhUZr3PEDjhM83kqhFtbJX0Ejcfu9M8RKo';
-const SHEET_RANGE = 'R1.1!A3';
+const SHEET_ID = '1aPHFoo9YPrBpwMIBsPlzoDcxn5cuoq9ZeAIcTtIe0ss';
+const SHEET_RANGE = 'Sheet1!A3';
 
-const NREGA_URL = 'https://nreganarep.nic.in/netnrega/app_issue.aspx?page=b&lflag=&state_name=MADHYA+PRADESH&state_code=17&district_name=BALAGHAT&district_code=1738&block_code=1738002&block_name=KHAIRLANJI&fin_year=2025-2026&source=national&Digest=AS/EzXOjY5nZjEFgC7kuSQ';
+const NREGA_URL = 'https://nreganarep.nic.in/netnrega/dpc_sms_new.aspx?lflag=eng&page=b&Short_Name=MP&state_name=MADHYA+PRADESH&state_code=17&district_name=BALAGHAT&district_code=1738&block_name=KHAIRLANJI&block_code=1738002&fin_year=2025-2026&dt=&EDepartment=ALL&wrkcat=ALL&worktype=ALL&Digest=0Rg9WmyQmiHlGt6U8z1w4A';
 
 async function scrapeTables() {
   const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
-  await page.goto(NREGA_URL, { waitUntil: 'networkidle0' });
+  await page.goto(NREGA_URL, { waitUntil: 'networkidle0', timeout: 60000 }); // 60 seconds
+
 
   const allData = await page.evaluate(() => {
     const tables = Array.from(document.querySelectorAll('table'));
-    const selectedIndexes = [1, 6]; // 2nd and 5th tables
+    const selectedIndexes = [1, 4]; // 2nd and 5th tables
 
     let finalData = [];
     selectedIndexes.forEach(index => {
@@ -53,19 +54,11 @@ async function writeToSheet(data) {
     requestBody: { values: data }
   });
 
-
-  console.log('✅ Data successfully written to R1.1!');
-}
-
-// ✅ Run this every minute
-cron.schedule('* * * * *', async () => {
-
   console.log('✅ Data successfully written to Sheet1!');
 }
 
 // ✅ Run this every minute
-cron.schedule('0 7 * * *', async () => {
-
+cron.schedule('* * * * *', async () => {
   try {
     console.log('⏱️ Scheduled scrape running...');
     const data = await scrapeTables();
