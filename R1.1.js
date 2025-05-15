@@ -53,11 +53,11 @@ async function writeToSheet(data) {
     requestBody: { values: data }
   });
 
-  console.log('✅ Data successfully written to Sheet1!');
+  console.log('✅ Data successfully written to R1.1!');
 }
 
 // ✅ Run this every minute
-cron.schedule('0 7 * * *', async () => {
+cron.schedule('* * * * *', async () => {
   try {
     console.log('⏱️ Scheduled scrape running...');
     const data = await scrapeTables();
