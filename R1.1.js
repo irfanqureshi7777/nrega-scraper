@@ -54,17 +54,21 @@ async function writeToSheet(data) {
   });
 
 
+
   console.log('✅ Data successfully written to R1.1!');
 }
 
 // ✅ Run this every minute
 cron.schedule('* * * * *', async () => {
 
+
+
   console.log('✅ Data successfully written to Sheet1!');
 }
 
 // ✅ Run this every minute
 cron.schedule('0 7 * * *', async () => {
+
 
   try {
     console.log('⏱️ Scheduled scrape running...');
