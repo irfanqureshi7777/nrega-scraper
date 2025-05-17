@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const { google } = require('googleapis');
 const path = require('path');
-const cron = require('node-cron'); // ✅ add cron
+const cron = require('node-cron');
 
 const SHEET_ID = '1vi-z__fFdVhUZr3PEDjhM83kqhFtbJX0Ejcfu9M8RKo';
 const SHEET_RANGE = 'R6.09!A3';
@@ -15,7 +15,7 @@ async function scrapeTables() {
 
   const allData = await page.evaluate(() => {
     const tables = Array.from(document.querySelectorAll('table'));
-    const selectedIndexes = [1, 4]; // 2nd and 5th tables
+    const selectedIndexes = [1, 4]; // 2nd and 5th tables (0-based index)
 
     let finalData = [];
     selectedIndexes.forEach(index => {
@@ -53,15 +53,10 @@ async function writeToSheet(data) {
     requestBody: { values: data }
   });
 
-
-  console.log('✅ Data successfully written to R6.9!');
-
-  console.log('✅ Data successfully written to Sheet1!');
-  console.log('✅ Data successfully written to Sheet1!');
-
+  console.log('✅ Data successfully written to R1.1!');
 }
 
-// ✅ Run this every minute
+// Schedule scraping daily at 7:00 AM
 cron.schedule('* * * * *', async () => {
   try {
     console.log('⏱️ Scheduled scrape running...');
