@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 const axios = require('axios');
 const { JWT } = require('google-auth-library');
-const credentials = require('./credentials.json'); // Ensure this file exists and is valid
+const credentials = JSON.parse(Buffer.from(process.env.GOOGLE_CREDENTIALS_BASE64, 'base64').toString('utf-8'));
 
 const spreadsheetId = '1bsS9b0FDjzPghhAfMW0YRsTdNnKdN6QMC6TS8vxlsJg';
 const sheet3Range = 'Sheet3!B3:B';
