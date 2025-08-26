@@ -1,4 +1,5 @@
 // scripts/A1.cjs
+require('dotenv').config();
 
 // ---- harden errors (prints real stacktraces) ----
 process.on('unhandledRejection', e => {
