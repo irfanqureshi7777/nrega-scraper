@@ -6,13 +6,13 @@ require('dotenv').config();
 
 // ----------------- CONFIG (edit list of root scripts to run) -----------------
 const scripts = [
-  "trakingfile.cjs",
+  "trakingfile1.cjs",
   "A1.cjs",
-  "labour.cjs",
-  "master.cjs",
-  "link.cjs",
+  "labour1.cjs",
+  "master1.cjs",
+  "link1.cjs",
   "achiv.cjs",
-  "works.cjs"
+  "works1.cjs"
 ];
 // -----------------------------------------------------------------------------
 
