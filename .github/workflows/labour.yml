@@ -1,4 +1,4 @@
-name: Run Labour Scraper
+name: Run Labour1 Scraper
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
     - cron: "30 1 * * *"
 
 jobs:
-  run-labour-cjs:
+  run-labour1:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,13 +16,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Set up Google credentials
-        run: echo "${{ secrets.GOOGLE_CREDENTIALS_BASE64 }}" | base64 --decode > nrega-scraper.json
-
-      - name: Run labour.cjs
-        run: node labour.cjs
+      - name: Run labour1.cjs
+        env:
+          GOOGLE_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_CREDENTIALS_BASE64 }}
+        run: node labour1.cjs
