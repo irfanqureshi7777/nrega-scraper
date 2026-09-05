@@ -4,7 +4,41 @@
 const builtinPath = require("path");
 require("dotenv").config();
 const P = require("./path.cjs");
+// ---- AI Studio Termux Telemetry ----
+async function reportToDashboard(result) {
+  try {
+    const apiUrl = process.env.APP_API_URL;
+    const apiKey = process.env.TERMUX_API_KEY;
 
+    if (!apiUrl || !apiKey) {
+      console.log("ℹ️ Dashboard telemetry not configured; skipping report.");
+      return;
+    }
+
+    const response = await require("axios").post(
+      `${apiUrl.replace(/\/$/, "")}/api/termux/report`,
+      {
+        success: !!result.success,
+        reportDate: result.reportDate || null,
+        recordsProcessed: Number(result.recordsProcessed || 0)
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "x-termux-api-key": apiKey
+        },
+        timeout: 15000
+      }
+    );
+
+    console.log("📡 Dashboard telemetry:", response.data);
+  } catch (err) {
+    console.log(
+      "⚠️ Dashboard telemetry failed:",
+      err.response?.data || err.message
+    );
+  }
+}
 // ---------------- MAIN ----------------
 (async () => {
   console.log("🔧 labour.cjs starting...");
@@ -359,6 +393,11 @@ try {
   } catch (e) {
     console.warn("Could not write run-note to central run sheet:", e && e.message ? e.message : e);
   }
+  await reportToDashboard({
+    success: true,
+    reportDate,
+    recordsProcessed: scrapedData.length
+  });
 
   console.log("🔚 labour.cjs finished.");
 })();
