@@ -1,0 +1,137 @@
+name: VBGRAMG Diagnostic
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install axios
+        run: npm install axios
+
+      - name: Test VBGRAMG
+        shell: bash
+        run: |
+          URL=$(node -e 'const fs=require("fs"); const s=fs.readFileSync("labour1.cjs","utf8"); const m=s.match(/process\.env\.NREGA_URL\s*\|\|\s*"([^"]+)"/); process.stdout.write(m ? m[1] : "")')
+
+          if [ -z "$URL" ]; then
+            echo "? NREGA_URL could not be extracted"
+            exit 1
+          fi
+
+          echo "::add-mask::$URL"
+
+          NREGA_URL="$URL" node <<'NODE'
+          const axios = require("axios");
+
+          (async () => {
+            const url = process.env.NREGA_URL;
+
+            if (!url) {
+              console.log("? NREGA_URL missing");
+              process.exit(1);
+            }
+
+            const u = new URL(url);
+            const base = `${u.protocol}//${u.host}/VBGRAMG/`;
+
+            const browserHeaders = {
+              "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/131.0.0.0 Safari/537.36",
+              "Accept":
+                "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+              "Accept-Language": "en-US,en;q=0.9",
+              "Referer": base,
+              "Connection": "keep-alive"
+            };
+
+            async function test(name, target, headers = {}) {
+              try {
+                const r = await axios.get(target, {
+                  headers,
+                  timeout: 20000,
+                  validateStatus: () => true
+                });
+
+                console.log(`\n=== ${name} ===`);
+                console.log("STATUS:", r.status);
+                console.log("CONTENT-TYPE:", r.headers["content-type"] || "");
+                console.log("SERVER:", r.headers["server"] || "");
+                console.log("REQUEST-ID:", r.headers["x-request-id"] || "");
+
+                let body =
+                  typeof r.data === "string"
+                    ? r.data
+                    : JSON.stringify(r.data);
+
+                console.log("BODY:", body.slice(0, 800));
+
+                return r;
+              } catch (e) {
+                console.log(`\n=== ${name} ===`);
+                console.log("ERROR:", e.code || e.message);
+                return null;
+              }
+            }
+
+            console.log("Target host:", u.host);
+            console.log("Target path:", u.pathname);
+
+            await test(
+              "1. Direct request",
+              url,
+              {
+                "User-Agent":
+                  "Mozilla/5.0 (compatible; nrega-scraper/1.0)"
+              }
+            );
+
+            await test(
+              "2. Browser-like headers",
+              url,
+              browserHeaders
+            );
+
+            const root = await test(
+              "3. Initial VBGRAMG page",
+              base,
+              browserHeaders
+            );
+
+            let cookies = "";
+
+            if (root && root.headers["set-cookie"]) {
+              cookies = root.headers["set-cookie"]
+                .map(x => x.split(";")[0])
+                .join("; ");
+            }
+
+            console.log(
+              "\nCookies received:",
+              cookies ? "YES" : "NO"
+            );
+
+            await test(
+              "4. Payload + session cookies",
+              url,
+              {
+                ...browserHeaders,
+                ...(cookies ? { Cookie: cookies } : {})
+              }
+            );
+          })().catch(err => {
+            console.error("? Diagnostic crashed:");
+            console.error(err);
+            process.exit(1);
+          });
+          NODE
